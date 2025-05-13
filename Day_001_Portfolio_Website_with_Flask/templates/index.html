@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hi, I'm Bhanuprakash</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">BP's protfolio</div>
+        <nav>
+            <a href="https://github.com/BpReddy1104">Projects</a>
+            <a href="https://www.linkedin.com/in/m-bhanuprakash-reddy-445033232/">About</a>
+            <a href="/resume">Resume</a>
+            <a href="mailto:bpreddy0011@gmail.com">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="intro">
+            <div class="text">
+                <h1>Hi, I'm <span>Bhanuprakash Reddy</span></h1>
+                <p>Ai software developer, and research analyst passionate about tech innovation and real-world impact.</p>
+                <p>Based in India, blending creativity with problem-solving in software development and AI-powered solutions.</p>
+                <a href="https://github.com/BpReddy1104" class="btn">Check out my work</a>
+            </div>
+            <div class="image">
+                <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Profile">
+            </div>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>Made by BP | <a href="mailto:bpreddy0011@gmail.com">bpreddy0011@gmail.com</a> | <a href="https://www.linkedin.com/in/m-bhanuprakash-reddy-445033232/">Linkedin</a></p>
+    </footer>
+</body>
+</html>
