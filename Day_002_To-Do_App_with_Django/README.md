@@ -89,6 +89,8 @@ You may extend this project by adding:
 - API support via Django REST Framework
 
 ---
+![image](https://github.com/user-attachments/assets/d16d771f-6150-4439-bcad-0553bfba4f8b)
+
 
 
 ## 🙌 Acknowledgements
