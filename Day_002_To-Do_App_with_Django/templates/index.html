@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My To-Do App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6 flex justify-center items-center">
+    <div class="flex flex-col lg:flex-row justify-center items-start gap-10 w-full max-w-7xl">
+        
+        <!-- Left Column: To-Do List -->
+        <div class="bg-white w-full lg:w-2/3 rounded-3xl p-8 shadow-lg">
+            <h2 class="text-3xl font-bold text-center mb-6 flex items-center justify-center gap-2">
+                📝 <span>My To-Do List</span>
+            </h2>
+
+            <form method="POST" action="{% url 'add_task' %}" class="flex gap-3 mb-6">
+                {% csrf_token %}
+                <input name="title" placeholder="What do you need to do?" 
+                    class="flex-1 border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <button class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-lg shadow hover:opacity-90 transition">Add</button>
+            </form>
+
+            <ul class="space-y-3">
+                {% for task in tasks %}
+                <li class="flex items-center justify-between p-4 rounded-lg shadow-sm 
+                           {% if task.completed %}bg-green-100{% else %}bg-red-100{% endif %} hover:scale-[1.01] transition-transform">
+                    <span class="flex-1 text-lg {% if task.completed %}line-through text-gray-500{% else %}text-gray-800{% endif %}">
+                        {{ task.title }}
+                    </span>
+                    <div class="flex gap-3 text-xl">
+                        <a href="{% url 'toggle_complete' task.id %}" title="Toggle Complete" class="text-purple-600 hover:text-purple-800 transition">✔️</a>
+                        <a href="{% url 'delete_task' task.id %}" title="Delete Task" class="text-pink-500 hover:text-pink-700 transition">🗑️</a>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="text-center text-gray-500">No tasks yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Right Column: Image -->
+        <div class="w-full lg:w-1/3">
+            <img src="{% static 'a2.jpg' %}" alt="To-Do Image" class="w-full h-auto rounded-xl shadow-xl">
+        </div>
+    </div>
+</body>
+</html>
