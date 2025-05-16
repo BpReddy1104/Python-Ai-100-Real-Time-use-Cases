@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI File Analyzer 9000 🤖</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at 20% 20%, #0f172a, #1e293b);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .neon-glow {
+      box-shadow: 0 0 15px #3b82f6, 0 0 30px #8b5cf6, 0 0 45px #3b82f6;
+    }
+
+    .frosted {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .pulse-ring {
+      animation: pulseRing 2s infinite;
+    }
+
+    @keyframes pulseRing {
+      0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+      70% { box-shadow: 0 0 0 20px rgba(139, 92, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-white px-4">
+
+  <div class="frosted rounded-3xl neon-glow p-8 w-full max-w-xl text-center pulse-ring">
+    <h1 class="text-3xl font-extrabold mb-3 tracking-wide">AI File Analyzer🤖 </h1>
+    <p class="text-sm text-purple-300 mb-6">Drop your file, and let the AI bot do its magic.</p>
+
+    <input type="file" id="fileInput" accept=".txt,.pdf,.png,.jpg,.jpeg"
+      class="mb-6 block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-semibold file:bg-purple-500/20 file:text-purple-300 hover:file:bg-purple-600/30"/>
+
+    <button onclick="uploadFile()" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-2 px-8 rounded-full hover:scale-105 transition duration-300 shadow-lg">
+      🔍 Upload & Analyze
+    </button>
+
+    <div id="output" class="mt-8 hidden">
+      <h2 class="text-xl font-semibold text-indigo-300 mb-2">AI Analysis Result:</h2>
+      <pre id="aiResult" class="bg-black/40 text-left p-4 rounded-xl text-sm text-green-300 overflow-auto max-h-48 border border-purple-500 shadow-inner"></pre>
+
+      <h2 class="mt-6 text-md font-semibold text-indigo-200">🔗 QR Code Download:</h2>
+      <img id="qrImage" class="mx-auto mt-3 rounded-lg border-2 border-purple-400 shadow-lg max-h-40" alt="QR Code" />
+      <a id="downloadLink" class="block mt-2 text-purple-300 underline text-sm hover:text-white transition" target="_blank">⬇ Download File</a>
+    </div>
+  </div>
+
+  <script>
+    async function uploadFile() {
+      const input = document.getElementById('fileInput');
+      const output = document.getElementById('output');
+
+      if (!input.files.length) {
+        Swal.fire('⚠️ No file selected', 'Please choose a file to upload.', 'warning');
+        return;
+      }
+
+      output.classList.add('hidden');
+
+      const formData = new FormData();
+      formData.append('file', input.files[0]);
+
+      try {
+        const res = await fetch('http://localhost:5000/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          Swal.fire('✅ Success', 'File uploaded and analyzed!', 'success');
+          document.getElementById('aiResult').textContent = JSON.stringify(data.ai_analysis, null, 2);
+          document.getElementById('qrImage').src = `data:image/png;base64,${data.qr_code_base64}`;
+          document.getElementById('downloadLink').href = data.download_url;
+          output.classList.remove('hidden');
+        } else {
+          Swal.fire('❌ Upload Failed', data.error || 'Unknown error occurred.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        Swal.fire('🚨 Error', 'Server error or connection failed.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

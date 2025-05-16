@@ -1,0 +1,66 @@
+#include <stdio.h>
+extern int y;
+int main()
+{
+
+increment();
+increment();
+increment();
+printf("\n in main y=%d",y);//
+//a=a+7; //error
+return 0;
+}
+void increment()
+{
+static int a=0;
+a++;
+printf("\na=%d",a);//1 //2   //3
+printf("\n in function y=%d",y);
+}
+y=15;
+
+#include <stdio.h>
+extern int y;
+int main()
+{
+
+increment();
+increment();
+increment();
+printf("\n in main y=%d",y);//
+//a=a+7; //error
+return 0;
+}
+void increment()
+{
+auto int a=0;
+a++;
+printf("\na=%d",a);//1 //1   //1
+printf("\n in function y=%d",y);
+}
+y=15;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1) Write a C-program to find the sum and average of all elements of an array.
+From abdulsaleem javeed to Everyone 11:42 AM
+2)Write a C program to find the largest element and its position in the array.
+From abdulsaleem javeed to Everyone 12:17 PM
+3) Write a C Program to generate 100 random integers in the range 1-100, store them in an array and print the average.
+4) Write a C-program to find the smallest and largest element in the array.
