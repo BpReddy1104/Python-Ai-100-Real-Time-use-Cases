@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Advanced Sentiment & Emotion Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://emojiapi.dev/api/v1/brain/64.png" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #0277bd;
+        }
+
+        .container {
+            background: #ffffffdd; /* white with slight transparency */
+            padding: 40px 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(3, 155, 229, 0.3);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header-with-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .header-with-image img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 2px #0277bd);
+        }
+
+        h1 {
+            background: linear-gradient(to right, #0288d1, #03a9f4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #81d4fa;
+            resize: none;
+            font-size: 16px;
+            color: #01579b;
+            background-color: #e1f5fe;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #0288d1;
+            outline: none;
+            background-color: #b3e5fc;
+        }
+
+        input[type="submit"] {
+            margin-top: 20px;
+            padding: 14px;
+            background: #039be5;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(3, 155, 229, 0.4);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background: #0288d1;
+            box-shadow: 0 6px 16px rgba(3, 155, 229, 0.6);
+        }
+
+        .result {
+            margin-top: 30px;
+            color: #01579b;
+        }
+
+        .chart-container {
+            margin-top: 25px;
+        }
+
+        .warning {
+            color: #ffb300; /* amber */
+            margin-top: 12px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-with-image">
+            <img src="{{ url_for('static', filename='images/brain.jpeg') }}" alt="Brain Icon" />
+            <h1>🧠 Emotion & Sentiment Analyzer</h1>
+        </div>
+        <form method="POST">
+            <textarea
+                name="text"
+                placeholder="E.g., I’m feeling excited but also a little anxious."
+            >{{ request.form.text or '' }}</textarea>
+            <input type="submit" value="🔍 Analyze" />
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h3>📊 Result</h3>
+            <p><strong>Language:</strong> {{ result.language }}</p>
+            {% set sentiment_emoji = {
+                'POSITIVE': '😊',
+                'NEGATIVE': '😞',
+                'NEUTRAL': '😐'
+            }[result.sentiment.upper()] if result.sentiment else '' %}
+            <p>
+                <strong>Sentiment:</strong> {{ result.sentiment }}
+                {{ sentiment_emoji }} ({{ result.score }}%)
+            </p>
+
+            {% if result.score < 70 %}
+            <p class="warning">⚠️ The model is not very confident in this result.</p>
+            {% endif %}
+        </div>
+
+        {% if result.emotion_scores %}
+        <div class="chart-container">
+            <canvas id="emotionChart"></canvas>
+        </div>
+        <script>
+            const ctx = document.getElementById('emotionChart').getContext('2d');
+            const emotionData = {
+                labels: {{ result.emotion_scores.keys()|list }},
+                datasets: [
+                    {
+                        label: 'Emotion Intensity',
+                        data: {{ result.emotion_scores.values()|list }},
+                        backgroundColor: [
+                            '#42a5f5',
+                            '#90caf9',
+                            '#64b5f6',
+                            '#1e88e5',
+                            '#1976d2',
+                            '#64b5f6',
+                            '#bbdefb',
+                            '#2196f3',
+                            '#1565c0',
+                            '#42a5f5'
+                        ],
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: emotionData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#01579b',
+                                font: { weight: 'bold' }
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
